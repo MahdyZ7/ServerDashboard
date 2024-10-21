@@ -15,7 +15,7 @@ get_memory_usage(){
 
 # Function to get disk space usage for a user
 get_disk_usage() {
-    du -b --max-depth=0 /home/$1 2> /dev/null | awk '{printf("%.2f G"), $1/1000000000}'
+    du -sb /home/$1 2> /dev/null | awk '{printf("%.2f G"), $1/1000000000}'
 }
 
 # Get all users
