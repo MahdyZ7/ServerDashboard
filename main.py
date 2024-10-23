@@ -8,7 +8,7 @@ import os
 from dotenv import load_dotenv
 
 # Set page config
-st.set_page_config(page_title="Server Monitoring Dashboard", layout="wide")
+st.set_page_config(page_title="Server Monitor", layout="wide")
 
 # Initialize database
 init_db()
@@ -57,7 +57,7 @@ ALERT_THRESHOLDS = {
 }
 
 # Dashboard title
-st.title("Server Monitoring Dashboard")
+st.title("Server Monitor")
 
 # Create a 2x3 grid for server metrics
 col1, col2, col3 = st.columns(3)
@@ -78,7 +78,7 @@ def check_alerts(metrics):
 		if metric in ALERT_THRESHOLDS and value > ALERT_THRESHOLDS[metric]:
 			alerts.append(f"{metric.replace('_', ' ').title()} exceeds threshold: {value:.1f}% (Threshold: {ALERT_THRESHOLDS[metric]}%)")
 	return alerts
-
+		
 def display_metrics():
 	for server, column in zip(st.session_state.servers, columns):
 		with column:
@@ -91,49 +91,10 @@ def display_metrics():
 				for alert in alerts:
 					st.warning(alert)
 			
-			# CPU usage gauge
-			fig_cpu = go.Figure(go.Indicator(
-				mode="gauge+number",
-				value=metrics['cpu_percent'],
-				title={'text': "CPU Usage %"},
-				domain={'x': [0, 1], 'y': [0, 1]},
-				gauge={'axis': {'range': [None, 100]},
-						'bar': {'color': "darkblue"},
-						'steps': [
-							{'range': [0, 50], 'color': "lightgray"},
-							{'range': [50, 80], 'color': "gray"},
-							{'range': [80, 100], 'color': "red"}],
-						'threshold': {
-							'line': {'color': "red", 'width': 4},
-							'thickness': 0.75,
-							'value': ALERT_THRESHOLDS['cpu_percent']}}))
-			fig_cpu.update_layout(height=200, margin=dict(l=10, r=10, t=50, b=10))
-			st.plotly_chart(fig_cpu, use_container_width=True, config={'staticPlot': True})
-
-			# Memory usage bar
-			fig_mem = go.Figure(go.Bar(
-				x=[metrics['memory_percent']],
-				y=['Memory'],
-				orientation='h',
-				text=[f"{metrics['memory_percent']:.1f}%"],
-				textposition='auto',
-				marker=dict(color='lightblue', line=dict(color='darkblue', width=2))
-			))
-			fig_mem.update_layout(height=100, margin=dict(l=10, r=10, t=10, b=10), xaxis_range=[0, 100])
-			st.plotly_chart(fig_mem, use_container_width=True, config={'staticPlot': True})
-
-			# Disk usage bar
-			fig_disk = go.Figure(go.Bar(
-				x=[metrics['disk_percent']],
-				y=['Disk'],
-				orientation='h',
-				text=[f"{metrics['disk_percent']:.1f}%"],
-				textposition='auto',
-				marker=dict(color='lightgreen', line=dict(color='darkgreen', width=2))
-			))
-			fig_disk.update_layout(height=100, margin=dict(l=10, r=10, t=10, b=10), xaxis_range=[0, 100])
-			st.plotly_chart(fig_disk, use_container_width=True, config={'staticPlot': True})
-
+			col1, col2, col3 = st.columns(3)
+			col1.metric("Cpu %", metrics['cpu_percent'])
+			col2.metric("Memory %", metrics['memory_percent'])
+			col3.metric("Disk %", metrics['disk_percent'])
 			# Top users table
 			st.text(f"# Physical CPUs	: {metrics['pcpu']}")
 			st.text(f"# Virtual CPUs	: {metrics['vcpu']}")
@@ -161,18 +122,13 @@ def display_metrics():
 					time.sleep(2)  # Simulate data collection
 				st.info("Historical data is being collected. Please wait or refresh the page.")
 
-# Main app logic
+
 update_metrics()
 display_metrics()
 
-# Auto-refresh
-if st.button('Refresh'):
-	update_metrics()
-	display_metrics()
-
-def schedule_auto_refresh(interval_in_seconds):
+def loopfrver():
 	while True:
-		time.sleep(interval_in_seconds * 60)  # Convert seconds to minutes
-		update_metrics()
-		display_metrics()
-schedule_auto_refresh(10)
+		time.sleep(10*60)
+		st.rerun()
+
+loopfrver()
