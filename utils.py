@@ -89,16 +89,17 @@ def get_metrics(server):
 		parsed_results = (result.stdout).split(sep=',')
 		return {
 			'arch': parsed_results[0],
-			'pcpu': parsed_results[1],
-			'vcpu': parsed_results[2],
-			'memory_ratio': parsed_results[3],
-			'memory_percent': float(parsed_results[4]),
-			'disk_ratio': parsed_results[5],
-			'disk_percent': float(parsed_results[6].strip('%')),
-			'cpu_percent': float(parsed_results[7].strip('%')),
-			'last_boot': parsed_results[8],
-			'tcp': parsed_results[9],
-			'users': parsed_results[10]
+			'os': parsed_results[1],
+			'pcpu': parsed_results[2],
+			'vcpu': parsed_results[3],
+			'memory_ratio': parsed_results[4],
+			'memory_percent': float(parsed_results[5]),
+			'disk_ratio': parsed_results[6],
+			'disk_percent': float(parsed_results[7].strip('%')),
+			'cpu_percent': float(parsed_results[8].strip('%')),
+			'last_boot': parsed_results[9],
+			'tcp': parsed_results[10],
+			'users': parsed_results[11]
 		}
 	except Exception as e:
 		print(f"Failed to get metric: {str(e)}")
@@ -120,9 +121,9 @@ def get_top_users(server):
 			parsed_results = line.split(sep=" ")
 			top_users.append({
 				'User': parsed_results[0],
-				'CPU %': parsed_results[1],
-				'Memory %': parsed_results[2],
-				'Disk (Gb)': parsed_results[3],
+				'CPU %': float(parsed_results[1]),
+				'Memory %': float(parsed_results[2]),
+				'Disk (Gb)': float(parsed_results[3]),
 			})
 		return top_users
 	except Exception as e:

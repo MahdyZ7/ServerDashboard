@@ -15,7 +15,11 @@ get_memory_usage(){
 
 # Function to get disk space usage for a user
 get_disk_usage() {
-    du -sb /home/$1 2> /dev/null | awk '{printf("%.2f"), $1/1000000000}'
+	if [ $(id -u) = 0 ]; then
+    	du -sb /home/$1 2> /dev/null | awk '{printf("%.2f"), $1/1000000000}'
+	else
+		echo nan
+	fi
 }
 
 # Get all users
@@ -29,5 +33,5 @@ do
     disk_usage=$(get_disk_usage $user)
 
     printf  "%s %s %s %s\n" "$user" "$cpu_usage" "$memory_usage" "$disk_usage"
-done | sort -k2,2rn -k3,3rn -k4,4rn | head -n 3
+done | sort -k2,2rn -k3,3rn -k4,4rn
 

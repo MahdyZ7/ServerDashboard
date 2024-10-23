@@ -95,7 +95,7 @@ def display_metrics():
 			col1.metric("Cpu %", metrics['cpu_percent'])
 			col2.metric("Memory %", metrics['memory_percent'])
 			col3.metric("Disk %", metrics['disk_percent'])
-			# Top users table
+			st.text(f"System OS	: {metrics['os']}")
 			st.text(f"# Physical CPUs	: {metrics['pcpu']}")
 			st.text(f"# Virtual CPUs	: {metrics['vcpu']}")
 			st.text(f"Memory Usage	: {metrics['memory_ratio']} ({metrics['memory_percent']}%)")
@@ -104,9 +104,10 @@ def display_metrics():
 			st.text(f"Last Boot	: {metrics['last_boot']}")
 			st.text(f"TCP Connections	: {metrics['tcp']} established")
 			st.text(f"Users logged	: {metrics['users']}")
+			# Top users table
 			st.subheader("Top Resource Users")
 			df_users = pd.DataFrame(metrics['top_users'])
-			st.dataframe(df_users, use_container_width=True, hide_index=True)
+			st.dataframe(df_users, use_container_width=True, hide_index=True, height=200)
 
 			# # Historical data
 			st.subheader("Historical Data (24 hours)")
