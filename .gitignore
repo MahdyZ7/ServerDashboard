@@ -1,2 +1,4 @@
 .env
 __pycache__/
+myenv
+server_metrics.db
